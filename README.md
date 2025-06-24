@@ -9,4 +9,5 @@ source env/bin/activate
 
 ```bash
 python main.py --file products.csv
+python main.py --file products.csv --where "price<500"
 ```
