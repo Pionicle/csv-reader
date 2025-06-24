@@ -67,7 +67,36 @@ def aggregate_table(table: list[dict[str]], aggregate: str) -> list[dict[str]]:
     """
     Aggregates a table based on the given aggregate function.
     """
-    pass
+    param, value_param = aggregate.split("=")
+
+    result_dict = {}
+    result = 0
+    first = True
+    for row in table:
+        match value_param:
+            case "avg":
+                result += row[param]
+            case "min":
+                if first:
+                    result = row[param]
+                    first = False
+                if row[param] < result:
+                    result = row[param]
+            case "max":
+                if first:
+                    result = row[param]
+                    first = False
+                if row[param] > result:
+                    result = row[param]
+    else:
+        match value_param:
+            case "avg":
+                result_dict[value_param] = result / len(table)
+            case "min":
+                result_dict[value_param] = result
+            case "max":
+                result_dict[value_param] = result
+    return [result_dict]
 
 
 def print_table(table: list[list[str]]) -> None:
