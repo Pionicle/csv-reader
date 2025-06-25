@@ -1,6 +1,6 @@
 import argparse
 import csv
-import traceback
+from typing import Callable
 
 from tabulate import tabulate
 
@@ -17,10 +17,10 @@ def convert_type(value: str) -> int | float | bool | str | None:
         return False
     try:
         return int(value)
-    except:
+    except ValueError:
         try:
             return float(value)
-        except:
+        except ValueError:
             return value
 
 
@@ -39,6 +39,30 @@ def get_table(file: str) -> list[dict[str]]:
         return table
 
 
+def check_arg(slpit_signs: list[str], values: list[str] = None):
+    """
+    Checks the user arguments for a function.
+    """
+
+    def wrapper(func: Callable):
+        def inner(table: list[dict[str]], arg: str):
+            for split_sign in slpit_signs:
+                if split_sign in arg:
+                    param, value = arg.split(split_sign)
+                    columns = list(table[0].keys())
+                    if param not in columns:
+                        raise Exception(f"{param} is not one of {columns}")
+                    if values is not None and value not in values:
+                        raise Exception(f"{value} is not one of {values}")
+                    return func(table, arg)
+            raise Exception(f"{arg} is not one of {slpit_signs}")
+
+        return inner
+
+    return wrapper
+
+
+@check_arg([">", "<", "="])
 def where_table(table: list[dict[str]], where: str) -> list[dict[str]]:
     """
     Filters a table based on the given where clause.
@@ -69,6 +93,7 @@ def where_table(table: list[dict[str]], where: str) -> list[dict[str]]:
     return new_table
 
 
+@check_arg(["="], ["avg", "min", "max"])
 def aggregate_table(table: list[dict[str]], aggregate: str) -> list[dict[str]]:
     """
     Aggregates a table based on the given aggregate function.
@@ -105,19 +130,14 @@ def aggregate_table(table: list[dict[str]], aggregate: str) -> list[dict[str]]:
     return [result_dict]
 
 
+@check_arg(["="], ["asc", "desc"])
 def order_by_table(table: list[dict[str]], order: str) -> list[dict[str]]:
     """
     Order the table by a specified parameter in ascending or descending order.
     """
     param, value_param = order.split("=")
 
-    reverse = False
-    if value_param == "asc":
-        reverse = False
-    elif value_param == "desc":
-        reverse = True
-    else:
-        raise ValueError(f"Invalid value parameter: {value_param}")
+    reverse = True if value_param == "desc" else False
     return sorted(table, key=lambda row: row[param], reverse=reverse)
 
 
