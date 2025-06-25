@@ -49,15 +49,26 @@ pip install -r reqierements.txt
 +-------+
 ```
 
+```bash
+~ python3 main.py --file products.csv --where "brand=xiaomi" --order-by "price=asc"
++---------------+---------+---------+----------+
+| name          | brand   |   price |   rating |
+|---------------+---------+---------+----------|
+| redmi 10c     | xiaomi  |     149 |      4.1 |
+| redmi note 12 | xiaomi  |     199 |      4.6 |
+| poco x5 pro   | xiaomi  |     299 |      4.4 |
++---------------+---------+---------+----------+
+```
+
 3. Покрытие тестами:
 
 ```bash
-~ pytest -vv --cov=main test_main.py
+~ pytest -vv --cov=table_operations test_table_operations.py
 
 
-Name      Stmts   Miss  Cover
------------------------------
-main.py      96     13    86%
------------------------------
-TOTAL        96     13    86%
+Name                  Stmts   Miss  Cover
+-----------------------------------------
+table_operations.py     100      3    97%
+-----------------------------------------
+TOTAL                   100      3    97%
 ```
