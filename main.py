@@ -1,13 +1,20 @@
 import argparse
 import csv
+import traceback
 
 from tabulate import tabulate
 
 
-def convert_type(value: str):
+def convert_type(value: str) -> int | float | bool | str | None:
     """
     Converts a string to an integer or float.
     """
+    if value in ["None", ""]:
+        return None
+    if value in ["True", "true"]:
+        return True
+    if value in ["False", "false"]:
+        return False
     try:
         return int(value)
     except:
@@ -45,8 +52,7 @@ def where_table(table: list[dict[str]], where: str) -> list[dict[str]]:
         sign = "="
 
     param, value_param = where.split(sign)
-    type_param = type(table[0][param])
-    value_param = type_param(value_param)
+    value_param = convert_type(value_param)
 
     new_table = []
     for row in table:
