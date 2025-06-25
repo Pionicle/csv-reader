@@ -5,6 +5,7 @@ from main import (
     get_table,
     where_table,
     aggregate_table,
+    order_by_table,
 )
 
 test_file_csv = "test_fruits.csv"
@@ -69,3 +70,31 @@ def test_where_table(where, expected):
 def test_aggregate_table(aggregate, expected):
     table = get_table(test_file_csv)
     assert aggregate_table(table, aggregate) == expected
+
+
+@pytest.mark.parametrize(
+    "order_by, expected",
+    [
+        (
+            "price=asc",
+            [
+                {"name": "pear", "price": 1, "is_sweet": None},
+                {"name": "apple", "price": 5.0, "is_sweet": True},
+                {"name": "orange", "price": 7.8, "is_sweet": False},
+                {"name": "banana", "price": 12.5, "is_sweet": True},
+            ],
+        ),
+        (
+            "price=desc",
+            [
+                {"name": "banana", "price": 12.5, "is_sweet": True},
+                {"name": "orange", "price": 7.8, "is_sweet": False},
+                {"name": "apple", "price": 5.0, "is_sweet": True},
+                {"name": "pear", "price": 1, "is_sweet": None},
+            ],
+        ),
+    ],
+)
+def test_order_by_table(order_by, expected):
+    table = get_table(test_file_csv)
+    assert order_by_table(table, order_by) == expected
