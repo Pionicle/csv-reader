@@ -1,0 +1,5 @@
+name,price,is_sweet
+apple,5.0,True
+banana,12.5,True
+orange,7.8,False
+pear,1,None
