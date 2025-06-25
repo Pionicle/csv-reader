@@ -1,6 +1,6 @@
 import pytest
 
-from main import (
+from table_operations import (
     convert_type,
     get_table,
     where_table,
